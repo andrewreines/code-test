@@ -155,18 +155,23 @@ module.exports = function(){
 
 
 	this.outputData = function(data, outputformat){
-		console.log(data);
-		console.log(outputformat);
+		//console.log(data);
+		//console.log(outputformat);
 
 		switch(outputformat) {
 			case "file":
-				const fs = require('fs');
-				const content = JSON.stringify(data);
+				var fs = require('fs');
+				var content = JSON.stringify(data);
+
+				if (!fs.existsSync('./output')) {
+					fs.mkdirSync('./output');
+				}
+
 				fs.writeFile("./output/result.json", content, 'utf8', function(err){
 					if (err){
 						console.log(err);
 					}
-					console.log("file saved");
+					console.log("file saved to output/result.json");
 				});
 				break;
 			case "web":
@@ -175,6 +180,7 @@ module.exports = function(){
 					response.writeHead(200, {'Content-type':'text/plain'});
 					response.write(displayHTML(data));
 					response.end();
+					console.log("results displayed at localhost:6789");
 				}).listen(6789);
 				break;
 			default:
