@@ -1,17 +1,18 @@
 
 module.exports = function(){
 
-	// 1. takes in the array of objects received by our get request
-	// 2. transforms array to project specifications
+	// 1. takes in the array of objects received by our get request (data)
+	// 2. transforms array to project specifications, day by day
 	// 3. passes data on to output function
-	this.transformData = function(data) {
-
-		data.sort(compareDates);
+	this.transformData = function(data){
 
 		var json = {};
-
 		var previousEntry = {};
 
+		// sorts data by oldest first
+		data.sort(compareDates);
+
+		// 
 		for (var i = 0; i < data.length; i++){
 
 			if (i === 0){
@@ -19,11 +20,11 @@ module.exports = function(){
 				var lowValue = data[i].lastPrice;
 			}
 
+			// take one day's raw data and turn it into one day's formatted data
 			var value = transformEntry(data[i], data[i-1], highValue, lowValue);
 
+			// add formatted day's data to object
 			json[formatDate(data[i].timestamp)] = value;
-
-
 
 			if (data[i].lastPrice > highValue){
 				highValue = data[i].lastPrice;
@@ -34,16 +35,6 @@ module.exports = function(){
 			}
 		}
 
-/*		data.forEach(function(entry) {
-
-			var value = transformEntry(entry, previousEntry);
-
-			previousEntry = entry;
-
-			json[formatDate(entry.timestamp)] = transformEntry(entry);
-
-		});*/
-
 		var outputformat = getArgs();
 		outputData(json, outputformat);
 
@@ -52,8 +43,7 @@ module.exports = function(){
 	// function used to sort incoming data by timestamp
 	this.compareDates = function(a, b){
 		var compare = 0;
-
-		if (a.timestamp > b.timestamp) {
+		if (a.timestamp > b.timestamp){
 			compare = 1;
 		} else if (a.timestamp < b.timestamp){
 			compare = -1
@@ -70,7 +60,7 @@ module.exports = function(){
 		var lowSinceStart = false;
 
 		if (previousEntry){
-			
+			// not first day
 			price = entry.lastPrice;
 			priceChange = Math.round((entry.lastPrice - previousEntry.lastPrice)*100)/100;
 
@@ -97,7 +87,7 @@ module.exports = function(){
 			}
 
 		} else {
-
+			// first day
 			price = entry.lastPrice;
 			priceChange = 'na';
 			change = 'na';
@@ -107,7 +97,7 @@ module.exports = function(){
 
 		}
 
-		entry = {"price":price, "priceChange":priceChange, "change":change, "dayOfWeek":dayOfWeek, "highSinceStart":highSinceStart, "lowSinceStart":lowSinceStart}
+		entry = {"price":price, "priceChange":priceChange, "change":change, "dayOfWeek":dayOfWeek, "highSinceStart":highSinceStart, "lowSinceStart":lowSinceStart};
 
 		return entry;
 	};

@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/andrewreines/code-test/issues"
   },
-  "homepage": "https://github.com/andrewreines/code-test#readme"
+  "homepage": "https://github.com/andrewreines/code-test#readme",
+  "dependencies": {
+    "d3": "^5.0.0"
+  }
 }
