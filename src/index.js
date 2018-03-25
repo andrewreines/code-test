@@ -40,6 +40,16 @@ Example raw data for one day:
 const https = require('https');
 const url = "https://www.bitmex.com/api/v1/instrument/compositeIndex?symbol=.XBT&filter=%7B%22timestamp.time%22%3A%2210%3A55%3A00%22%2C%22reference%22%3A%22BSTP%22%7D&count=100&reverse=true";
 
+function formatDate(timestamp){
+	//'2017-12-15T10:55:00.000Z'
+	var newTimestamp = timestamp.split("T")[0];
+	return newTimestamp;
+
+}
+
+funtion getDayofWeek(date){
+	return 1;
+}
 
 // gets command line argument sent from npm command. Used to determine output format.
 function getArgs(){
@@ -64,13 +74,27 @@ function compareDates(a, b){
 // 3. passes data on to output function
 function transformData(data){
 
+	var newData = [];
+
 	data.sort(compareDates);
 
-	console.log(data);
+	var count = 0;
 
-	var outputformat = getArgs();
+	var json = {};
 
-	outputData(data, outputformat);
+	data.forEach(function(entry) {
+		var previousPrice = [0,0];
+		var previousHigh = [0,0];
+		var previousLow = [0,0];
+		json[formatDate(entry.timestamp)] = entry;
+
+	});
+
+	console.log(json);
+
+	//var outputformat = getArgs();
+
+	//outputData(data, outputformat);
 }
 
 
