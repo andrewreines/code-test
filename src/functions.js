@@ -180,8 +180,8 @@ module.exports = function(){
 					response.writeHead(200, {'Content-type':'text/plain'});
 					response.write(displayHTML(data));
 					response.end();
-					console.log("results displayed at localhost:6789");
 				}).listen(6789);
+				console.log("results displayed at localhost:6789");
 				break;
 			default:
 				console.log("please specify output format");
