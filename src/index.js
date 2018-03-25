@@ -47,7 +47,7 @@ function formatDate(timestamp){
 
 }
 
-funtion getDayofWeek(date){
+function getDayofWeek(date){
 	return 1;
 }
 
@@ -92,9 +92,9 @@ function transformData(data){
 
 	console.log(json);
 
-	//var outputformat = getArgs();
+	var outputformat = getArgs();
 
-	//outputData(data, outputformat);
+	outputData(json, outputformat);
 }
 
 
@@ -106,6 +106,14 @@ function outputData(data, outputformat){
 
 	switch(outputformat) {
 		case "file":
+			const fs = require('fs');
+			const content = JSON.stringify(data);
+			fs.writeFile("./output/result.json", content, 'utf8', function(err){
+				if (err){
+					console.log(err);
+				}
+				console.log("file saved");
+			});
 			break;
 		case "web":
 			break;
