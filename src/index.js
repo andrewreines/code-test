@@ -37,132 +37,15 @@ Example raw data for one day:
 
 */
 
-'use strict'
+require('./functions.js')();
 
-const https = require('https');
-const url = "https://www.bitmex.com/api/v1/instrument/compositeIndex?symbol=.XBT&filter=%7B%22timestamp.time%22%3A%2210%3A55%3A00%22%2C%22reference%22%3A%22BSTP%22%7D&count=100&reverse=true";
-
-function formatDate(timestamp){
-	//'2017-12-15T10:55:00.000Z'
-	var newTimestamp = timestamp.split("T")[0];
-	return newTimestamp;
-
-}
-
-function getDayofWeek(date){
-	return 1;
-}
-
-// gets command line argument sent from npm command. Used to determine output format.
-function getArgs(){
-	return process.argv[2];
-}
-
-
-// function used to sort incoming data by timestamp
-function compareDates(a, b){
-	let compare = 0;
-	if (a.timestamp > b.timestamp) {
-		compare = 1;
-	} else if (a.timestamp < b.timestamp){
-		compare = -1
-	}
-	return compare;
-}
-
-
-function transformEntry(entry, previousEntry){
-
-	var price = 0;
-	var priceChange = '';
-	var change = '';
-	var dayofWeek = '';
-	var highSinceStart = false;
-	var lowSinceStart = false;
-
-	if (previousEntry === {}){
-		price = entry.lastPrice;
-		priceChange = 'na';
-		change = 'na';
-		dayofWeek = getDayofWeek(entry.timestamp);
-		highSinceStart = true;
-		lowSinceStart = true;
-
-	} else {
-		price = entry.lastPrice;
-		priceChange = 'na';
-		change = 'na';
-		dayofWeek = getDayofWeek(entry.timestamp);
-		highSinceStart = true;
-		lowSinceStart = true;
-	}
-
-	entry = {"price":price, "priceChange":priceChange, "change":change, "dayofWeek":dayofWeek, "highSinceStart":highSinceStart, "lowSinceStart":lowSinceStart}
-
-	return entry;
-}
-
-// 1. takes in the array of objects received by our get request
-// 2. transforms array to project specifications
-// 3. passes data on to output function
-function transformData(data){
-
-	var newData = [];
-
-	data.sort(compareDates);
-
-	var count = 0;
-
-	var json = {};
-
-	var previousEntry = {};
-
-	data.forEach(function(entry) {
-
-		var value = transformEntry(entry, previousEntry);
-
-		previousEntry = entry;
-
-		json[formatDate(entry.timestamp)] = transformEntry(entry);
-
-	});
-
-	console.log(json);
-
-	var outputformat = getArgs();
-
-	outputData(json, outputformat);
-}
-
-
-// 1. takes in data from transformData()
-// 2. depending on desired output format [file|web], either output final results to output directory or spin up http server to view final results 
-function outputData(data, outputformat){
-	console.log(data);
-	console.log(outputformat);
-
-	switch(outputformat) {
-		case "file":
-			const fs = require('fs');
-			const content = JSON.stringify(data);
-			fs.writeFile("./output/result.json", content, 'utf8', function(err){
-				if (err){
-					console.log(err);
-				}
-				console.log("file saved");
-			});
-			break;
-		case "web":
-			break;
-		default:
-			console.log("please specify output format");
-	}
-}
+var https = require('https');
+var url = "https://www.bitmex.com/api/v1/instrument/compositeIndex?symbol=.XBT&filter=%7B%22timestamp.time%22%3A%2210%3A55%3A00%22%2C%22reference%22%3A%22BSTP%22%7D&count=100&reverse=true";
 
 //get data and begin process
 https.get(url, res => {
 	res.setEncoding("utf8");
-	let body = "";
+	var body = "";
 	res.on("data", data => {
 		body += data;
 	});
@@ -171,3 +54,4 @@ https.get(url, res => {
 		transformData(body);
 	});
 });
+
