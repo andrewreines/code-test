@@ -23,6 +23,8 @@ From a predetermined URL, output a JSON file, or display on a browser or endpoin
 - "high since start” / “low since start” is if this is the highest/lowest price since the oldest date in the list. 
 
 
+
+
 Example raw data for one day:
 
 [{ timestamp: '2017-12-15T10:55:00.000Z',
@@ -69,6 +71,37 @@ function compareDates(a, b){
 }
 
 
+function transformEntry(entry, previousEntry){
+
+	var price = 0;
+	var priceChange = '';
+	var change = '';
+	var dayofWeek = '';
+	var highSinceStart = false;
+	var lowSinceStart = false;
+
+	if (previousEntry === {}){
+		price = entry.lastPrice;
+		priceChange = 'na';
+		change = 'na';
+		dayofWeek = getDayofWeek(entry.timestamp);
+		highSinceStart = true;
+		lowSinceStart = true;
+
+	} else {
+		price = entry.lastPrice;
+		priceChange = 'na';
+		change = 'na';
+		dayofWeek = getDayofWeek(entry.timestamp);
+		highSinceStart = true;
+		lowSinceStart = true;
+	}
+
+	entry = {"price":price, "priceChange":priceChange, "change":change, "dayofWeek":dayofWeek, "highSinceStart":highSinceStart, "lowSinceStart":lowSinceStart}
+
+	return entry;
+}
+
 // 1. takes in the array of objects received by our get request
 // 2. transforms array to project specifications
 // 3. passes data on to output function
@@ -82,11 +115,15 @@ function transformData(data){
 
 	var json = {};
 
+	var previousEntry = {};
+
 	data.forEach(function(entry) {
-		var previousPrice = [0,0];
-		var previousHigh = [0,0];
-		var previousLow = [0,0];
-		json[formatDate(entry.timestamp)] = entry;
+
+		var value = transformEntry(entry, previousEntry);
+
+		previousEntry = entry;
+
+		json[formatDate(entry.timestamp)] = transformEntry(entry);
 
 	});
 
