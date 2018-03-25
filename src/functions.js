@@ -149,8 +149,8 @@ module.exports = function(){
 
 
 	this.displayHTML = function(jsonData){
-		var template = JSON.stringify(jsonData);
-		return template;
+		var html = '<html><meta charset="utf8"><style>'+''+'</style><body><div id="data">'+JSON.stringify(jsonData)+'</div></body></html>';
+		return html;
 	};
 
 
@@ -177,7 +177,7 @@ module.exports = function(){
 			case "web":
 				var http = require('http');
 				http.createServer(function(request, response){
-					response.writeHead(200, {'Content-type':'text/plain'});
+					response.writeHead(200, {'Content-type':'text/html'});
 					response.write(displayHTML(data));
 					response.end();
 				}).listen(6789);
