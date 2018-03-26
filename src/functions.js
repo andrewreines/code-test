@@ -149,7 +149,8 @@ module.exports = function(){
 
 
 	this.displayHTML = function(jsonData){
-		var html = '<html><meta charset="utf8"><style>'+''+'</style><body><div id="data">'+JSON.stringify(jsonData)+'</div></body></html>';
+		var styles = '';
+		var html = '<html><meta charset="utf8"><style>'+styles+'</style><body><div id="data">'+JSON.stringify(jsonData)+'</div></body></html>';
 		return html;
 	};
 
